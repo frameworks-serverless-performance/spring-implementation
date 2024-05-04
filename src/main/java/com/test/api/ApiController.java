@@ -19,19 +19,9 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 @RestController
 public class ApiController {
 
-    // create a DynamoDB client
+    // create a DynamoDB client (thread-safe)
     private static final Region region = Region.EU_CENTRAL_1;
     private static final DynamoDbClient db = DynamoDbClient.builder().region(region).build();
-
-    // initialize a MessageDigest with the SHA-256 algorithm
-    private static final MessageDigest digest;
-    static {
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @GetMapping(value = "/api/echo", produces = "text/plain")
     public String echo(@RequestParam String string) {
@@ -59,13 +49,15 @@ public class ApiController {
     }
 
     @PostMapping(value = "/api/compute", produces = "text/plain")
-    public String compute(@RequestBody int[] numbers) {
+    public String compute(@RequestBody int[] numbers) throws NoSuchAlgorithmException {
 
         // first we sort the array
         // Arrays.sort() uses a dual-pivot quicksort algorithm for integers (in OpenJDK 22)
         Arrays.sort(numbers);
 
         // now we calculate the SHA-256 hash using the algorithm described in the thesis
+        // the MessageDigest class is not thread-safe, so we need to create a new instance for each request
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = {};
         for (int number : numbers) {
             byte[] numberHash = digest.digest(new byte[]{(byte) number});

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +42,7 @@ class ApiApplicationTests {
 	}
 
 	@Test
-	void testCompute() {
+	void testCompute() throws NoSuchAlgorithmException {
 		int[] numbers = {9, 58, 79, 99, 33, 67, 68, 48, 26, 42, 11,
 				37, 49, 35, 28, 55, 19, 72, 61, 1, 19, 31, 92, 84, 21,
 				99, 25, 29, 42, 61, 64, 84, 99, 40, 85, 39, 11, 13, 29, 49,
